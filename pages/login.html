@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="cookie.js"></script>
+</head>
+
+<body>
+
+    <label for="">Email : </label><input type="email" id="email"><br><br>
+    <label for="">Password : </label><input type="password" id="password"><br><br>
+    <button onclick="login()">Login</button>
+
+    <script>
+        function login() {
+
+            let email = $("#email").val();
+            let password = $("#password").val()
+            // alert(email + " " + password);
+
+            let data = {
+                data: {
+                    email : email,
+                    password : password
+                }
+            }
+
+
+            $.ajax({
+
+                type: 'post',
+
+                url: 'http://localhost:8081/login',
+
+                data: JSON.stringify(data),
+
+                contentType: "application/json; charset=utf-8",
+
+                traditional: true,
+
+                success: function (result) {
+
+                    result = JSON.parse(result);
+
+                    console.log(result);
+
+                    if (result.status == "success") {
+
+                        setcookie("usertype", "user");
+
+                        setcookie("userid", result.data[0].id);
+
+                        setcookie("username", result.data[0].name);
+
+                        window.location.replace("http://localhost:8081/user");
+
+                    }
+
+                    else {
+
+                        alert("Wrong credentials");
+
+                    }
+
+                },
+
+                error: function (err) {
+
+                    console.log(err);
+
+                }
+
+            });
+
+
+
+        }
+    </script>
+
+
+
+</body>
+
+</html>

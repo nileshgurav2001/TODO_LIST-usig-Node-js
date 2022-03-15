@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="cookie.js"></script>
+</head>
+
+<body>
+
+    <label for="">Name :</label>
+    <input type="text" id="name"><br><br>
+    <label for="">Email :</label>
+    <input type="email" id="email"><br><br>
+
+    <label for="">Password :</label>
+    <input type="text" id="password1"><br><br><br>
+
+    <label for="">Password :</label>
+    <input type="password" id="password2"><br><br>
+    <input type="checkbox" onclick="showpass()">
+
+    <button onclick="submit()">Submit</button>
+
+    <script>
+
+        function showpass() {
+            var pass = document.getElementById("password2");
+            if (pass.type === "password") {
+                pass.type = "text";
+            }
+
+            else {
+                pass.type = "password";
+            }
+        }
+
+        function validateemail(email) {
+            var pattern = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
+            return pattern.test(email);
+        }
+
+        function submit() {
+            let email = $("#email").val();
+            let name = $("#name").val();
+            let password = $("#password1").val();
+            let setpassword = $("#password2").val();
+
+
+
+            if (validateemail(email) == false) {
+                alert("please Enter your valide eamil")
+                document.getElementById("email").focus();
+                return;
+            }
+
+            if(password != setpassword){
+                alert ("enter your passwprd");
+                return;
+            }
+
+
+
+
+            // alert(email + " " + password);
+
+            let data = {
+                data: {
+                    name: name,
+                    email: email,
+                    password: password
+
+                }
+            }
+
+
+            $.ajax({
+
+                type: 'post',
+
+                url: 'http://localhost:8081/register',
+
+                data: JSON.stringify(data),
+
+                contentType: "application/json; charset=utf-8",
+
+                traditional: true,
+
+                success: function (result) {
+
+                    result = JSON.parse(result);
+
+                    console.log(result);
+
+                    if (result.data.status == "success") {
+
+                        setcookie("usertype", "user");
+
+                        setcookie("userid", result.data.id);
+
+                        setcookie("username", name);
+
+                        window.location.replace("http://localhost:8081/logintask");
+
+                    }
+
+                    else {
+
+                        alert("Wrong credentials");
+
+                    }
+
+                },
+
+                error: function (err) {
+
+                    console.log(err);
+
+                }
+
+            });
+
+        }
+
+    </script>
+</body>
+
+</html>
